@@ -1,69 +1,26 @@
 (ns app.todo-list
-  (:require contrib.str
-            #?(:clj [datascript.core :as d]) ; database on server
-            [hyperfiddle.electric :as e]
-            [hyperfiddle.electric-dom2 :as dom]
-            [hyperfiddle.electric-ui4 :as ui]))
+  (:require [hyperfiddle.electric :as e]
+            [hyperfiddle.electric-dom2 :as dom]))
 
-#?(:clj (defonce !conn (d/create-conn {}))) ; database on server
-(e/def db) ; injected database ref; Electric defs are always dynamic
+#?(:clj (defonce !text (atom "# Your document
 
-(e/defn TodoItem [id]
-  (e/server
-    (let [e (d/entity db id)
-          status (:task/status e)]
-      (e/client
-        (dom/div
-          (ui/checkbox
-            (case status :active false, :done true)
-            (e/fn [v]
-              (e/server
-                (d/transact! !conn [{:db/id id
-                                     :task/status (if v :done :active)}])
-                nil))
-            (dom/props {:id id}))
-          (dom/label (dom/props {:for id}) (dom/text (e/server (:task/description e)))))))))
+- major point 1
+- major point 2
 
-(e/defn InputSubmit [F]
-  ; Custom input control using lower dom interface for Enter handling
-  (dom/input (dom/props {:placeholder "Buy milk"})
-    (dom/on "keydown" (e/fn [e]
-                        (when (= "Enter" (.-key e))
-                          (when-some [v (contrib.str/empty->nil (-> e .-target .-value))]
-                            (new F v)
-                            (set! (.-value dom/node) "")))))))
+_for glory!_")))
+(e/def text (e/server (e/watch !text)))
 
-(e/defn TodoCreate []
-  (e/client
-    (InputSubmit. (e/fn [v]
-                    (e/server
-                      (d/transact! !conn [{:task/description v
-                                           :task/status :active}])
-                      nil)))))
-
-#?(:clj (defn todo-count [db]
-          (count
-            (d/q '[:find [?e ...] :in $ ?status
-                   :where [?e :task/status ?status]] db :active))))
-
-#?(:clj (defn todo-records [db]
-          (->> (d/q '[:find [(pull ?e [:db/id :task/description]) ...]
-                      :where [?e :task/status]] db)
-            (sort-by :task/description))))
+(comment
+  (reset! !text "INSANE STUFF 4"))
 
 (e/defn Todo-list []
-  (e/server
-    (binding [db (e/watch !conn)]
-      (e/client
-        (dom/link (dom/props {:rel :stylesheet :href "/todo-list.css"}))
-        (dom/h1 (dom/text "minimal todo list"))
-        (dom/p (dom/text "it's multiplayer, try two tabs"))
-        (dom/div (dom/props {:class "todo-list"})
-          (TodoCreate.)
-          (dom/div {:class "todo-items"}
-            (e/server
-              (e/for-by :db/id [{:keys [db/id]} (todo-records db)]
-                (TodoItem. id))))
-          (dom/p (dom/props {:class "counter"})
-            (dom/span (dom/props {:class "count"}) (dom/text (e/server (todo-count db))))
-            (dom/text " items left")))))))
+  (e/client
+   (dom/link (dom/props {:rel :stylesheet :href "/todo-list.css"}))
+   (dom/link (dom/props {:rel :stylesheet :href "/pandoc-preview.css"}))
+   (dom/h1 (dom/text "Commonmark editor"))
+   (dom/p (dom/em (dom/text "powered by Pandoc and Electric Clojure")))
+   (dom/textarea (dom/props {:class "input-textfield"})
+                 (dom/on "input" (e/fn [e]
+                                   (when-some [v (.. e -target -value)]
+                                     (e/server (reset! !text v))))))
+   (dom/div (dom/text text))))
