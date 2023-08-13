@@ -18,7 +18,6 @@ ARG VERSION
 RUN clojure -X:build uberjar :jar-name "app.jar" :verbose true :version '"'$VERSION'"'
 
 FROM amazoncorretto:11 AS app
-RUN yum install -y pandoc
 WORKDIR /app
 COPY --from=build /app/app.jar app.jar
 EXPOSE 8080
