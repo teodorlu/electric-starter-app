@@ -1,6 +1,7 @@
 (ns app.todo-list
   (:require [hyperfiddle.electric :as e]
-            [hyperfiddle.electric-dom2 :as dom]))
+            [hyperfiddle.electric-dom2 :as dom]
+            #?(:clj [app.pandoc :as pandoc])))
 
 #?(:clj (defonce !text (atom "# Your document
 
@@ -24,4 +25,4 @@ _for glory!_")))
                  (dom/on "input" (e/fn [e]
                                    (when-some [v (.. e -target -value)]
                                      (e/server (reset! !text v))))))
-   (dom/div (dom/text text))))
+   (dom/div (dom/text (e/server (-> text pandoc/from-markdown pandoc/to-html))))))
