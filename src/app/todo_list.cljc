@@ -30,4 +30,6 @@ _for glory!_")))
       (dom/pre (dom/text (e/server text-html)))
       ;; Q: how do I create a dom node with innerHTML equal to html-text?
       ;; Please advise!
+      ;;
+      ;; I'd like to have a preview of HTML I just generated here.
       ))))
