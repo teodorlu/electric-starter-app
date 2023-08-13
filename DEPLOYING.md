@@ -1,4 +1,4 @@
-# Deployment
+# Deploying
 
 ClojureScript optimized build, Dockerfile, Uberjar, Github actions CD to fly.io
 
