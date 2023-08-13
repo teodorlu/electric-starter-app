@@ -9,7 +9,10 @@
         org.clojure/clojurescript {:mvn/version "1.11.60"}
         org.clojure/tools.logging {:mvn/version "1.2.4"}
         ch.qos.logback/logback-classic {:mvn/version "1.2.11"}
-        ring-basic-authentication/ring-basic-authentication {:mvn/version "1.1.1"}}
+        ring-basic-authentication/ring-basic-authentication {:mvn/version "1.1.1"}
+        babashka/fs {:mvn/version "0.4.19"}
+        babashka/process {:mvn/version "0.5.21"}
+        cheshire/cheshire {:mvn/version "5.11.0"}}
  :aliases {:dev
            {:extra-deps
             {binaryage/devtools {:mvn/version "1.0.6"}
