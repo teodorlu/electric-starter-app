@@ -28,8 +28,8 @@ _for glory!_")))
    (let [text-html (e/server (-> text pandoc/from-markdown pandoc/to-html))]
      (dom/div
       (dom/pre (dom/text (e/server text-html)))
-      ;; Q: how do I create a dom node with innerHTML equal to html-text?
-      ;; Please advise!
-      ;;
-      ;; I'd like to have a preview of HTML I just generated here.
-      ))))
+      (dom/div
+       (dom/p (dom/text
+               "Q: how do I create a dom node with innerHTML equal to html-text?"
+               " Please advise!"))
+       (dom/p (dom/text "I'd like to have a preview of HTML I just generated here.")))))))
