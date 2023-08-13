@@ -25,4 +25,9 @@ _for glory!_")))
                  (dom/on "input" (e/fn [e]
                                    (when-some [v (.. e -target -value)]
                                      (e/server (reset! !text v))))))
-   (dom/div (dom/text (e/server (-> text pandoc/from-markdown pandoc/to-html))))))
+   (let [text-html (e/server (-> text pandoc/from-markdown pandoc/to-html))]
+     (dom/div
+      (dom/pre (dom/text (e/server text-html)))
+      ;; Q: how do I create a dom node with innerHTML equal to html-text?
+      ;; Please advise!
+      ))))
